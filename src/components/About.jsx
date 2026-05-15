@@ -6,9 +6,9 @@ export default function About() {
 
     // Если у вас есть другие фото салона, просто добавьте их пути в этот массив
     const photos = [
-        "/images/salon.png",
-        "/images/salon2.png",
-        "/images/salon3.png"
+        "/images/salon.webp",
+        "/images/salon2.webp",
+        "/images/salon3.webp"
     ]
 
     const nextPhoto = () => setCurrentPhoto(prev => (prev + 1) % photos.length)
@@ -102,6 +102,7 @@ export default function About() {
                                     key={idx}
                                     src={src}
                                     alt={`Интерьер салона керамогранита ПРОРАБ ${idx + 1}`}
+                                    loading="lazy"
                                     className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${currentPhoto === idx ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
                                         }`}
                                 />

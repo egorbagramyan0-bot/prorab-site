@@ -8,6 +8,7 @@ export default function Hero() {
         if (mq.matches) return
 
         const handleScroll = () => {
+            if (window.innerWidth < 768) return // Disable parallax on mobile
             if (heroRef.current) {
                 const offset = window.scrollY * 0.35
                 heroRef.current.style.transform = `translateY(${offset}px) scale(1.05)`
@@ -26,7 +27,7 @@ export default function Hero() {
                 style={{ willChange: 'transform' }}
             >
                 <img
-                    src="/images/hero2.png"
+                    src="/images/hero2.webp"
                     alt=""
                     className="w-full h-full object-cover object-center"
                     style={{ imageRendering: 'auto' }}

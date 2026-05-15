@@ -35,7 +35,7 @@ export default function Header() {
                 {/* Logo */}
                 <a href="#" className="flex items-center gap-3 group cursor-pointer">
                     <img
-                        src="/images/logo2.png"
+                        src="/images/logo2.webp"
                         alt="ПРОРАБ"
                         className="h-[50px] md:h-[108px] lg:h-[132px] transition-all duration-500 group-hover:brightness-110"
                     />
