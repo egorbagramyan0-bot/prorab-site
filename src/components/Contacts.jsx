@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function Contacts() {
     const sectionRef = useRef(null)
-    const [mapLoaded, setMapLoaded] = useState(false)
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -132,27 +131,16 @@ export default function Contacts() {
                     </div>
 
                     {/* Map */}
-                    <div
-                        className="reveal rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 h-[300px] sm:h-[420px] lg:h-full min-h-[300px] sm:min-h-[420px] shadow-2xl shadow-black/30 relative bg-stone-800"
-                        onClick={() => setMapLoaded(true)}
-                    >
-                        {!mapLoaded ? (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group">
-                                <div className="w-16 h-16 bg-gradient-to-br from-gold to-gold-light rounded-full flex items-center justify-center text-stone-900 mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                                </div>
-                                <span className="font-heading text-lg font-medium text-stone-300 group-hover:text-white transition-colors duration-300">Загрузить карту</span>
-                            </div>
-                        ) : (
-                            <iframe
-                                src="https://yandex.ru/map-widget/v1/?z=12&ol=biz&oid=18218279631"
-                                width="100%"
-                                height="100%"
-                                frameBorder="0"
-                                allowFullScreen
-                                title="Расположение салона ПРОРАБ на Яндекс Картах"
-                            />
-                        )}
+                    <div className="reveal rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 h-[300px] sm:h-[420px] lg:h-full min-h-[300px] sm:min-h-[420px] shadow-2xl shadow-black/30">
+                        <iframe
+                            src="https://yandex.ru/map-widget/v1/?z=12&ol=biz&oid=18218279631"
+                            width="100%"
+                            height="100%"
+                            frameBorder="0"
+                            allowFullScreen
+                            loading="lazy"
+                            title="Расположение салона ПРОРАБ на Яндекс Картах"
+                        />
                     </div>
                 </div>
             </div>
