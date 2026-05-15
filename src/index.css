@@ -76,7 +76,7 @@ body {
   width: max-content;
   gap: 2.5rem;
   padding-right: 2.5rem;
-  animation: scroll-marquee 26s linear infinite;
+  animation: scroll-marquee 30s linear infinite;
   will-change: transform;
 }
 
@@ -97,7 +97,7 @@ body {
 /* Mobile: ускоряем карусель (сейчас она пропорционально замедлена) */
 @media (max-width: 768px) {
   .marquee-track {
-    animation-duration: 13s;
+    animation-duration: 15s;
   }
 }
 
