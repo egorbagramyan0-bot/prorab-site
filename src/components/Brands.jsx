@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const brands = [
     { name: 'Alma Ceramica', url: 'https://almaceramica.ru', logo: '/images/brands-opt/alma.webp' },
@@ -18,22 +18,59 @@ const brands = [
     { name: 'Уральский Гранит', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/ural.webp' },
 ]
 
-function BrandCard({ brand }) {
+const BrandSphere = () => {
+    const [radius, setRadius] = useState(450)
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 640) setRadius(240)
+            else if (window.innerWidth < 1024) setRadius(350)
+            else setRadius(500)
+        }
+        handleResize()
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
     return (
-        <a
-            href={brand.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="brand-logo flex-shrink-0 flex items-center justify-center w-[150px] sm:w-[200px] h-[70px] sm:h-[90px] bg-white rounded-xl sm:rounded-2xl border border-stone-200/80 p-1.5 sm:p-2 group hover:border-gold/40 transition-all duration-500 cursor-pointer"
-            title={`Перейти на сайт ${brand.name}`}
-        >
-            <img
-                src={brand.logo}
-                alt={brand.name}
-                loading="lazy"
-                className="w-full h-full object-contain"
-            />
-        </a>
+        <div className="sphere-container overflow-hidden pointer-events-none mt-4 sm:mt-8">
+            {/* Ambient gradients to fade edges smoothly */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#1c1917_70%)] pointer-events-none z-40" />
+
+            {/* Central Stone Sphere */}
+            <div className="stone-sphere">
+                <img src="/images/sphere.png" alt="Сфера из гранита" />
+            </div>
+
+            {/* Center Single Orbit */}
+            <div className="sphere-orbit-container" style={{ transform: 'rotateX(-8deg)' }}>
+                <div className="sphere-orbit" style={{ animation: 'spin-y 40s linear infinite' }}>
+                    {brands.map((brand, i) => {
+                        const angle = (360 / brands.length) * i
+                        const animDelay = -(40 * (angle / 360)) // sync with 40s spin-y
+
+                        return (
+                            <a
+                                key={brand.name}
+                                href={brand.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="sphere-card-wrapper"
+                                style={{
+                                    transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
+                                    '--anim-delay': `${animDelay}s`
+                                }}
+                                title={`Перейти на сайт ${brand.name}`}
+                            >
+                                <div className="sphere-card">
+                                    <img src={brand.logo} alt={brand.name} loading="lazy" />
+                                </div>
+                            </a>
+                        )
+                    })}
+                </div>
+            </div>
+        </div>
     )
 }
 
@@ -55,8 +92,6 @@ export default function Brands() {
         els?.forEach((el) => observer.observe(el))
         return () => observer.disconnect()
     }, [])
-
-    const duplicatedBrands = [...brands, ...brands]
 
     return (
         <section
@@ -83,31 +118,20 @@ export default function Brands() {
                     </p>
                 </div>
 
-                {/* Marquee carousel */}
+                {/* 3D Sphere Component */}
                 <div className="reveal relative">
-                    {/* Gradient masks */}
-                    <div className="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-stone-900 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-stone-900 to-transparent z-10 pointer-events-none" />
-
-                    {/* Track */}
-                    <div className="overflow-hidden">
-                        <div className="marquee-track">
-                            {duplicatedBrands.map((brand, i) => (
-                                <BrandCard key={`${brand.name}-${i}`} brand={brand} />
-                            ))}
-                        </div>
-                    </div>
+                    <BrandSphere />
                 </div>
 
                 {/* Static grid */}
-                <div className="reveal mt-12 sm:mt-20 max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                <div className="mt-8 sm:mt-12 max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 relative z-30 transition-opacity duration-1000">
                     {brands.map((brand) => (
                         <a
                             key={brand.name}
                             href={brand.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="brand-logo bg-white border border-stone-200/60 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 flex items-center justify-center h-[70px] sm:h-[90px] hover:border-gold/40 transition-all duration-500 cursor-pointer"
+                            className="bg-white border border-stone-200/60 rounded-lg sm:rounded-xl p-1 sm:p-1.5 flex items-center justify-center h-[60px] sm:h-[76px] hover:border-gold/40 transition-all duration-500 cursor-pointer"
                             title={`Перейти на сайт ${brand.name}`}
                         >
                             <img
