@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 
 const brands = [
-    { name: 'Alma Ceramica', url: 'https://almaceramica.ru', logo: '/images/brands-opt/alma.webp' },
-    { name: 'Artkera', url: 'https://artkera.ru/?ysclid=mp5uood2u9366592724', logo: '/images/brands-opt/artkera.webp' },
-    { name: 'Casati', url: 'https://casaticeramica.ru/?ysclid=mp5uwk3g5k782095352', logo: '/images/brands-opt/casati.webp' },
-    { name: 'Cersanit', url: 'https://cersanit.ru/catalog/2d/', logo: '/images/brands-opt/cersanit.webp' },
-    { name: 'Dako', url: 'https://dako.club/?ysclid=mp5uubragx437521517', logo: '/images/brands-opt/dako.webp' },
-    { name: 'Delacora', url: 'https://artkera.ru/collections?brand=.delacora', logo: '/images/brands-opt/delacora.webp' },
-    { name: 'Eurotile', url: 'https://eurotile.ru/', logo: '/images/brands-opt/eurotile.webp' },
-    { name: 'Graniteya', url: 'https://www.uralgres.com/catalog/granitea/?ysclid=mp5uzeetyh794605150', logo: '/images/brands-opt/graniteya.webp' },
-    { name: 'Idalgo', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/idalgo.webp' },
-    { name: 'Kerama Marazzi', url: 'https://kerama-marazzi.com', logo: '/images/brands-opt/kerama-marazzi.webp' },
-    { name: 'Keramin', url: 'https://keramin.ru/?ysclid=mp5uwx5ff4815611066', logo: '/images/brands-opt/keramin.webp' },
-    { name: 'LCM', url: 'https://artkera.ru/collections?brand=.lcm', logo: '/images/brands-opt/lcm.webp' },
-    { name: 'Maimoon', url: 'https://maimoonceramica.ru/', logo: '/images/brands-opt/maimoon.webp' },
-    { name: 'New Trend', url: 'https://artkera.ru/collections?brand=.new-trend', logo: '/images/brands-opt/newtrend.webp' },
-    { name: 'Уральский Гранит', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/ural.webp' },
+    { name: 'Alma Ceramica', url: 'https://almaceramica.ru', logo: '/images/brands-opt/alma.png' },
+    { name: 'Artkera', url: 'https://artkera.ru/?ysclid=mp5uood2u9366592724', logo: '/images/brands-opt/artkera.png' },
+    { name: 'Casati', url: 'https://casaticeramica.ru/?ysclid=mp5uwk3g5k782095352', logo: '/images/brands-opt/casati.png' },
+    { name: 'Cersanit', url: 'https://cersanit.ru/catalog/2d/', logo: '/images/brands-opt/cersanit.png' },
+    { name: 'Dako', url: 'https://dako.club/?ysclid=mp5uubragx437521517', logo: '/images/brands-opt/dako.png' },
+    { name: 'Delacora', url: 'https://artkera.ru/collections?brand=.delacora', logo: '/images/brands-opt/delacora.png' },
+    { name: 'Eurotile', url: 'https://eurotile.ru/', logo: '/images/brands-opt/eurotile.png' },
+    { name: 'Graniteya', url: 'https://www.uralgres.com/catalog/granitea/?ysclid=mp5uzeetyh794605150', logo: '/images/brands-opt/graniteya.png' },
+    { name: 'Idalgo', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/idalgo.png' },
+    { name: 'Kerama Marazzi', url: 'https://kerama-marazzi.com', logo: '/images/brands-opt/kerama-marazzi.png' },
+    { name: 'Keramin', url: 'https://keramin.ru/?ysclid=mp5uwx5ff4815611066', logo: '/images/brands-opt/keramin.png' },
+    { name: 'LCM', url: 'https://artkera.ru/collections?brand=.lcm', logo: '/images/brands-opt/lcm.png' },
+    { name: 'Maimoon', url: 'https://maimoonceramica.ru/', logo: '/images/brands-opt/maimoon.png' },
+    { name: 'New Trend', url: 'https://artkera.ru/collections?brand=.new-trend', logo: '/images/brands-opt/newtrend.png' },
+    { name: 'Уральский Гранит', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/ural.png' },
 ]
 
 const BrandSphere = () => {

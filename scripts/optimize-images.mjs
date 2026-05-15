@@ -13,20 +13,20 @@ async function optimizeImage(inputPath, outputPath, options) {
     let q = quality || 80;
     let resizeWidth = width || metadata.width;
 
-    // Resize and convert to WebP
-    let buffer = await sharp(inputPath)
-        .resize({ width: resizeWidth, withoutEnlargement: true })
-        .webp({ quality: q, effort: 6 })
-        .toBuffer();
+    let sharpInstance = sharp(inputPath).resize({ width: resizeWidth, withoutEnlargement: true });
 
-    // If maxSizeKB specified, reduce quality until we fit
-    if (maxSizeKB) {
-        while (buffer.length > maxSizeKB * 1024 && q > 30) {
-            q -= 5;
-            buffer = await sharp(inputPath)
-                .resize({ width: resizeWidth, withoutEnlargement: true })
-                .webp({ quality: q, effort: 6 })
-                .toBuffer();
+    let buffer;
+    if (options.asPng) {
+        buffer = await sharpInstance.png({ compressionLevel: 9, effort: 7 }).toBuffer();
+    } else {
+        buffer = await sharpInstance.webp({ quality: q, effort: 6 }).toBuffer();
+
+        // If maxSizeKB specified, reduce quality until we fit (only for webp)
+        if (maxSizeKB) {
+            while (buffer.length > maxSizeKB * 1024 && q > 30) {
+                q -= 5;
+                buffer = await sharpInstance.webp({ quality: q, effort: 6 }).toBuffer();
+            }
         }
     }
 
@@ -79,10 +79,10 @@ async function main() {
 
     for (const file of brandFiles) {
         const input = path.join(brandsDir, file);
-        const outputName = file.toLowerCase().replace(/\s+/g, '-').replace('.png', '.webp');
+        const outputName = file.toLowerCase().replace(/\s+/g, '-');
         const output = path.join(brandsOptDir, outputName);
         totalBefore += fs.statSync(input).size;
-        totalAfter += await optimizeImage(input, output, { width: 300, quality: 80, maxSizeKB: 80 });
+        totalAfter += await optimizeImage(input, output, { width: 300, asPng: true });
     }
 
     console.log(`\n📊 Итого:`);
