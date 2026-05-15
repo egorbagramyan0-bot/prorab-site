@@ -73,8 +73,10 @@ body {
 /* ===== Marquee ===== */
 .marquee-track {
   display: flex;
+  width: max-content;
   gap: 2.5rem;
-  animation: scroll-marquee 40s linear infinite;
+  padding-right: 2.5rem;
+  animation: scroll-marquee 20s linear infinite;
   will-change: transform;
 }
 
@@ -95,7 +97,7 @@ body {
 /* Mobile: ускоряем карусель в 2 раза */
 @media (max-width: 768px) {
   .marquee-track {
-    animation-duration: 20s;
+    animation-duration: 10s;
   }
 }
 

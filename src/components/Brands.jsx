@@ -56,7 +56,7 @@ export default function Brands() {
         return () => observer.disconnect()
     }, [])
 
-    const duplicatedBrands = [...brands, ...brands, ...brands, ...brands]
+    const duplicatedBrands = [...brands, ...brands]
 
     return (
         <section
