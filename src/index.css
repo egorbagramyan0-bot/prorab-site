@@ -195,41 +195,15 @@ body {
 
 @media (max-width: 768px) {
   .sphere-card-wrapper {
-    width: 66px;
-    height: 36px;
-    top: -18px;
-    left: -33px;
+    width: 90px;
+    height: 45px;
+    top: -22.5px;
+    left: -45px;
   }
 
   .sphere-card {
     border-radius: 0.5rem;
-    padding: 0;
-    /* removed padding temporarily */
-    position: relative;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.92) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    filter: none !important;
-    transform: none !important;
-    animation: none !important;
-  }
-
-  .sphere-card img {
-    display: block !important;
-    width: 70%;
-    height: 70%;
-    max-width: 70%;
-    max-height: 70%;
-    object-fit: contain;
-    position: relative;
-    z-index: 5;
-    opacity: 1 !important;
-    visibility: visible !important;
-    filter: none !important;
-    mix-blend-mode: normal !important;
-    margin: auto;
-    transform: none !important;
+    padding: 0.65rem;
   }
 }
 
