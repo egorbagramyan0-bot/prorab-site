@@ -5,7 +5,7 @@ export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 50)
+        const handleScroll = () => setScrolled(window.scrollY > 80)
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
@@ -24,11 +24,11 @@ export default function Header() {
                 top-2 md:top-0 
                 left-1/2 md:left-0 
                 -translate-x-1/2 md:translate-x-0 
-                w-[60%] sm:w-[50%] md:w-full 
+                md:w-full md:max-w-none
                 rounded-2xl md:rounded-none
                 ${scrolled
-                    ? 'py-1.5 md:py-3 bg-stone-900/90 backdrop-blur-xl shadow-2xl shadow-black/20 border border-white/5 md:border-x-0 md:border-t-0'
-                    : 'py-1.5 md:py-5 bg-transparent'
+                    ? 'w-[60%] max-w-[280px] py-1.5 md:py-3 bg-stone-900/90 backdrop-blur-xl shadow-2xl shadow-black/20 border border-white/5 md:border-x-0 md:border-t-0'
+                    : 'w-[calc(100%-32px)] py-1.5 md:py-5 bg-transparent'
                 }`}
         >
             <div className="max-w-7xl mx-auto px-3 md:px-5 sm:px-8 flex items-center justify-between">
