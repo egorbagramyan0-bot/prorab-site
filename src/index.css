@@ -195,15 +195,30 @@ body {
 
 @media (max-width: 768px) {
   .sphere-card-wrapper {
-    width: 110px;
-    height: 55px;
-    top: -27px;
-    left: -55px;
+    width: 66px;
+    height: 36px;
+    top: -18px;
+    left: -33px;
   }
 
   .sphere-card {
-    border-radius: 0.75rem;
-    padding: 0.75rem;
+    border-radius: 0.5rem;
+    padding: 0.35rem;
+    /* ~6px padding */
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+  }
+
+  .sphere-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 11;
+    transform: translateZ(1px);
+    /* fix for disappearing 3d images on iOS Safari */
+    opacity: 1;
   }
 }
 

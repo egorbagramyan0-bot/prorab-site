@@ -23,7 +23,7 @@ const BrandSphere = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 640) setRadius(240)
+            if (window.innerWidth < 640) setRadius(250)
             else if (window.innerWidth < 1024) setRadius(350)
             else setRadius(500)
         }
