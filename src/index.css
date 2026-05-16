@@ -203,7 +203,7 @@ body {
 
   .sphere-card {
     border-radius: 0.5rem;
-    padding: 0.65rem;
+    padding: 0.35rem 0.5rem;
   }
 }
 
