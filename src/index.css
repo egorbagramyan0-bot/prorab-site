@@ -150,10 +150,10 @@ body {
 
 .sphere-card-wrapper {
   position: absolute;
-  top: -45px;
-  left: -90px;
-  width: 180px;
-  height: 90px;
+  top: -36px;
+  left: -72px;
+  width: 144px;
+  height: 72px;
   pointer-events: auto;
   transform-style: preserve-3d;
 }
@@ -195,10 +195,10 @@ body {
 
 @media (max-width: 768px) {
   .sphere-card-wrapper {
-    width: 90px;
-    height: 45px;
-    top: -22.5px;
-    left: -45px;
+    width: 76px;
+    height: 38px;
+    top: -19px;
+    left: -38px;
   }
 
   .sphere-card {

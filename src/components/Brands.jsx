@@ -16,6 +16,11 @@ const brands = [
     { name: 'Maimoon', url: 'https://maimoonceramica.ru/', logo: '/images/brands-opt/maimoon.webp' },
     { name: 'New Trend', url: 'https://artkera.ru/collections?brand=.new-trend', logo: '/images/brands-opt/newtrend.webp' },
     { name: 'Уральский Гранит', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/ural.webp' },
+    { name: 'Altacera', url: 'https://artkera.ru/collections?brand=.altacera', logo: '/images/brands-opt/altacera.webp' },
+    { name: 'Gracia Ceramica', url: 'https://graciaceramica.com/collections/', logo: '/images/brands-opt/gracia.webp' },
+    { name: 'Laparet', url: 'https://laparet.ru/collection/keramogranit/', logo: '/images/brands-opt/laparet.webp' },
+    { name: 'Protile', url: 'https://protiles.uz/ru/tipovye-resheniya/', logo: '/images/brands-opt/protile.webp' },
+    { name: 'Vitra', url: 'https://www.vitra-russia.ru/catalog/tiles/', logo: '/images/brands-opt/vitra.webp' },
 ]
 
 const BrandSphere = () => {
@@ -25,7 +30,7 @@ const BrandSphere = () => {
         const handleResize = () => {
             if (window.innerWidth < 640) setRadius(250)
             else if (window.innerWidth < 1024) setRadius(350)
-            else setRadius(500)
+            else setRadius(520)
         }
         handleResize()
         window.addEventListener('resize', handleResize)
@@ -121,6 +126,32 @@ export default function Brands() {
                 {/* 3D Sphere Component */}
                 <div className="reveal relative">
                     <BrandSphere />
+                </div>
+
+                {/* Catalog Prompt */}
+                <div className="mt-16 sm:mt-24 mb-6 sm:mb-8 text-center reveal">
+                    <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-stone-800/50 border border-stone-700/30 backdrop-blur-sm group">
+                        <span className="text-stone-400 text-sm sm:text-base font-light tracking-wide">
+                            Для перехода в каталог нажмите
+                        </span>
+                        <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold animate-pulse">
+                            <div className="absolute inset-0 rounded-full bg-gold/20 animate-ping opacity-25" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="relative z-10 transition-transform duration-500 group-hover:scale-110"
+                            >
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Static grid */}
