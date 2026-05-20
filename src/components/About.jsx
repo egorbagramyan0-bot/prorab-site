@@ -4,15 +4,25 @@ export default function About() {
     const sectionRef = useRef(null)
     const [currentPhoto, setCurrentPhoto] = useState(0)
 
-    // Если у вас есть другие фото салона, просто добавьте их пути в этот массив
+    // Обновленные 6 фотографий салона
     const photos = [
-        "/images/salon.webp",
-        "/images/salon2.webp",
-        "/images/salon3.webp"
+        "/images/s1.webp",
+        "/images/s2.webp",
+        "/images/s3.webp",
+        "/images/s4.webp",
+        "/images/s5.webp",
+        "/images/s6.webp"
     ]
 
     const nextPhoto = () => setCurrentPhoto(prev => (prev + 1) % photos.length)
     const prevPhoto = () => setCurrentPhoto(prev => (prev - 1 + photos.length) % photos.length)
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentPhoto(prev => (prev + 1) % photos.length)
+        }, 3000)
+        return () => clearInterval(timer)
+    }, [photos.length])
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -33,40 +43,24 @@ export default function About() {
 
     const features = [
         {
-            icon: (
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
-                </svg>
-            ),
-            title: 'Живой шоурум',
-            desc: 'Полноразмерные образцы керамогранита — оцените текстуру и масштаб вживую',
+            value: '25+',
+            title: 'Брендов-партнёров',
+            desc: 'Работаем напрямую с ведущими заводами-изготовителями',
         },
         {
-            icon: (
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                </svg>
-            ),
-            title: 'Гарантия качества',
-            desc: 'Работаем только с проверенными брендами и заводами-изготовителями',
+            value: '3000+',
+            title: 'Коллекций доступно к заказу',
+            desc: 'Огромный выбор текстур, форматов и оттенков под любой проект',
         },
         {
-            icon: (
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                </svg>
-            ),
+            value: '7/7',
+            title: 'Дней в неделю',
+            desc: 'Мы открыты каждый день без перерывов с 9:00 до 20:00',
+        },
+        {
+            value: 'PRO',
             title: 'Экспертная помощь',
             desc: 'Подберём материал под ваш проект, стиль и бюджет',
-        },
-        {
-            icon: (
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            ),
-            title: 'Без выходных',
-            desc: 'Работаем каждый день без перерывов с 9:00 до 20:00',
         },
     ]
 
@@ -102,8 +96,9 @@ export default function About() {
                                     key={idx}
                                     src={src}
                                     alt={`Интерьер салона керамогранита ПРОРАБ ${idx + 1}`}
-                                    loading="lazy"
-                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${currentPhoto === idx ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
+                                    loading={idx === 0 ? "eager" : "lazy"}
+                                    fetchPriority={idx === 0 ? "high" : "auto"}
+                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${currentPhoto === idx ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
                                         }`}
                                 />
                             ))}
@@ -150,9 +145,15 @@ export default function About() {
                                 key={i}
                                 className="reveal group glass-light rounded-2xl p-7 hover:shadow-xl hover:shadow-stone-900/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
                             >
-                                <div className="w-12 h-12 bg-stone-900 rounded-xl flex items-center justify-center text-gold mb-5 group-hover:bg-gradient-to-br group-hover:from-gold group-hover:to-gold-light group-hover:text-stone-900 transition-all duration-500">
-                                    {item.icon}
-                                </div>
+                                {item.value ? (
+                                    <div className="font-heading text-4xl sm:text-5xl font-bold text-gradient mb-4 drop-shadow-[0_0_12px_rgba(202,138,4,0.3)] group-hover:scale-105 transition-transform duration-500 origin-left">
+                                        {item.value}
+                                    </div>
+                                ) : (
+                                    <div className="w-12 h-12 bg-stone-900 rounded-xl flex items-center justify-center text-gold mb-5 group-hover:bg-gradient-to-br group-hover:from-gold group-hover:to-gold-light group-hover:text-stone-900 transition-all duration-500 shadow-[0_0_15px_rgba(202,138,4,0.15)] group-hover:shadow-[0_0_20px_rgba(202,138,4,0.4)]">
+                                        {item.icon}
+                                    </div>
+                                )}
                                 <h3 className="font-heading text-xl font-bold text-stone-900 mb-2">
                                     {item.title}
                                 </h3>

@@ -44,6 +44,7 @@ export default {
                 'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
                 'slide-up': 'slide-up 0.8s ease-out',
                 'fade-in-up': 'fade-in-up 0.7s ease-out both',
+                'progress': 'progress 3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
             },
             keyframes: {
                 'scroll-marquee': {
@@ -65,6 +66,10 @@ export default {
                 'fade-in-up': {
                     '0%': { transform: 'translateY(30px)', opacity: '0' },
                     '100%': { transform: 'translateY(0)', opacity: '1' },
+                },
+                'progress': {
+                    '0%': { transform: 'scaleX(0)' },
+                    '100%': { transform: 'scaleX(1)' },
                 },
             },
             backdropBlur: {

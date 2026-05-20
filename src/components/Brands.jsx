@@ -44,7 +44,10 @@ const BrandSphere = () => {
 
             {/* Central Stone Sphere */}
             <div className="stone-sphere">
-                <img src="/images/sphere.png" alt="Сфера из гранита" />
+                <picture className="w-full h-full flex items-center justify-center">
+                    <source srcSet="/images/sphere.webp" type="image/webp" />
+                    <img src="/images/sphere.png" alt="Сфера из гранита" />
+                </picture>
             </div>
 
             {/* Center Single Orbit */}
@@ -132,7 +135,7 @@ export default function Brands() {
                 <div className="mt-16 sm:mt-24 mb-6 sm:mb-8 text-center reveal">
                     <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-stone-800/50 border border-stone-700/30 backdrop-blur-sm group">
                         <span className="text-stone-400 text-sm sm:text-base font-light tracking-wide">
-                            Для перехода в каталог нажмите
+                            Для перехода в каталог нажмите на логотип
                         </span>
                         <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold animate-pulse">
                             <div className="absolute inset-0 rounded-full bg-gold/20 animate-ping opacity-25" />

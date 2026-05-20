@@ -12,8 +12,8 @@ export default function Header() {
 
     const navLinks = [
         { href: '#about', label: 'О салоне' },
+        { href: '#ceramic3d', label: 'Ceramic 3D' },
         { href: '#brands', label: 'Бренды' },
-        { href: '#why-us', label: 'Преимущества' },
         { href: '#contacts', label: 'Контакты' },
     ]
 
@@ -33,11 +33,11 @@ export default function Header() {
         >
             <div className="max-w-7xl mx-auto px-3 md:px-5 sm:px-8 flex items-center justify-between">
                 {/* Logo */}
-                <a href="#" className="flex items-center gap-3 group cursor-pointer">
+                <a href="#" className="flex items-center flex-shrink-0 gap-3 group cursor-pointer">
                     <img
                         src="/images/logo2.webp"
                         alt="ПРОРАБ"
-                        className="h-[50px] md:h-[108px] lg:h-[132px] transition-all duration-500 group-hover:brightness-110"
+                        className="w-auto h-[50px] md:h-[108px] lg:h-[132px] object-contain block transition-all duration-500 group-hover:brightness-110"
                     />
                 </a>
 

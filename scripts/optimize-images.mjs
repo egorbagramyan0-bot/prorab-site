@@ -59,13 +59,24 @@ async function main() {
     totalBefore += fs.statSync(logoInput).size;
     totalAfter += await optimizeImage(logoInput, logoOutput, { width: 400, quality: 85, maxSizeKB: 80 });
 
-    // 3. Salon photos → max 800px wide, max 150KB each
+    // 3. Salon photos → max 1200px wide, max 200KB each
     console.log('\n--- Salon Photos ---');
-    for (const name of ['salon.png', 'salon2.png', 'salon3.png']) {
+    for (const name of ['s1.jpg', 's2.jpg', 's3.jpg', 's4.jpg', 's5.jpg', 's6.jpg']) {
         const input = path.join(PUBLIC, name);
-        const output = path.join(PUBLIC, name.replace('.png', '.webp'));
-        totalBefore += fs.statSync(input).size;
-        totalAfter += await optimizeImage(input, output, { width: 800, quality: 80, maxSizeKB: 150 });
+        const output = path.join(PUBLIC, name.replace('.jpg', '.webp'));
+        if (fs.existsSync(input)) {
+            totalBefore += fs.statSync(input).size;
+            totalAfter += await optimizeImage(input, output, { width: 1200, quality: 82, maxSizeKB: 200 });
+        }
+    }
+
+    // 3.5. Stone Sphere (3D backdrop) → max 800px wide, max 300KB
+    console.log('\n--- Stone Sphere ---');
+    const sphereInput = path.join(PUBLIC, 'sphere.png');
+    const sphereOutput = path.join(PUBLIC, 'sphere.webp');
+    if (fs.existsSync(sphereInput)) {
+        totalBefore += fs.statSync(sphereInput).size;
+        totalAfter += await optimizeImage(sphereInput, sphereOutput, { width: 800, quality: 80, maxSizeKB: 300 });
     }
 
     // 4. Brand logos → max 300px wide, max 80KB each

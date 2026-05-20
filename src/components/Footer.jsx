@@ -8,7 +8,7 @@ export default function Footer() {
                     {/* Logo & desc */}
                     <div>
                         <img
-                            src="/images/logo2.png"
+                            src="/images/logo2.webp"
                             alt="ПРОРАБ"
                             className="h-[120px] mb-5 opacity-80"
                         />
@@ -25,8 +25,8 @@ export default function Footer() {
                         <nav className="flex flex-col gap-3">
                             {[
                                 { href: '#about', label: 'О салоне' },
+                                { href: '#ceramic3d', label: 'Ceramic 3D' },
                                 { href: '#brands', label: 'Бренды' },
-                                { href: '#why-us', label: 'Преимущества' },
                                 { href: '#contacts', label: 'Контакты' },
                             ].map((link) => (
                                 <a

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 export default function Hero() {
-    const heroRef = useRef(null)
+    const videoContainerRef = useRef(null)
 
     useEffect(() => {
         const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -9,9 +9,9 @@ export default function Hero() {
 
         const handleScroll = () => {
             if (window.innerWidth < 768) return // Disable parallax on mobile
-            if (heroRef.current) {
+            if (videoContainerRef.current) {
                 const offset = window.scrollY * 0.35
-                heroRef.current.style.transform = `translateY(${offset}px) scale(1.05)`
+                videoContainerRef.current.style.transform = `translateY(${offset}px) scale(1.05)`
             }
         }
         window.addEventListener('scroll', handleScroll, { passive: true })
@@ -20,32 +20,62 @@ export default function Hero() {
 
     return (
         <section className="relative h-screen min-h-[600px] overflow-hidden flex items-center" role="banner">
-            {/* Parallax background */}
+            {/* === Layer 1: Video background === */}
             <div
-                ref={heroRef}
-                className="absolute inset-0"
+                ref={videoContainerRef}
+                className="absolute inset-0 z-0"
                 style={{ willChange: 'transform' }}
             >
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    poster="/images/hero2.webp"
+                    preload="auto"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                    }}
+                >
+                    <source src="/videos/hero.mp4" type="video/mp4" />
+                </video>
+
+                {/* Fallback image (shows if video fails to load) */}
                 <img
                     src="/images/hero2.webp"
                     alt=""
-                    className="w-full h-full object-cover object-center"
-                    style={{ imageRendering: 'auto' }}
+                    aria-hidden="true"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        zIndex: -1,
+                    }}
                 />
             </div>
 
-            {/* Cinematic overlays */}
-            <div className="absolute inset-0 bg-gradient-to-b from-stone-900/60 via-stone-900/30 to-stone-900" />
-            <div className="absolute inset-0 bg-gradient-to-r from-stone-900/70 via-transparent to-transparent" />
+            {/* === Layer 2: Cinematic overlays === */}
+            <div className="absolute inset-0 z-[1] bg-gradient-to-b from-stone-900/60 via-stone-900/30 to-stone-900" />
+            <div className="absolute inset-0 z-[1] bg-gradient-to-r from-stone-900/70 via-transparent to-transparent" />
 
             {/* Subtle grid pattern */}
-            <div className="absolute inset-0 deco-grid opacity-15" />
+            <div className="absolute inset-0 z-[1] deco-grid opacity-15" />
 
             {/* Ambient glow */}
-            <div className="absolute bottom-0 left-1/4 w-[600px] h-[400px] bg-gold/5 rounded-full blur-[120px] animate-glow-pulse" />
+            <div className="absolute bottom-0 left-1/4 z-[1] w-[600px] h-[400px] bg-gold/5 rounded-full blur-[120px] animate-glow-pulse" />
 
-            {/* Content */}
-            <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 w-full">
+            {/* === Layer 3: Content === */}
+            <div className="relative z-[2] max-w-7xl mx-auto px-5 sm:px-8 w-full">
                 <div className="max-w-3xl">
                     {/* Section tag */}
                     <div className="section-tag mb-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
