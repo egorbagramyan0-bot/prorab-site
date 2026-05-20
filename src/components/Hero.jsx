@@ -1,14 +1,24 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Hero() {
     const videoContainerRef = useRef(null)
+    const videoRef = useRef(null)
+    const [videoReady, setVideoReady] = useState(false)
+    const [videoError, setVideoError] = useState(false)
+    const [isMobile, setIsMobile] = useState(false)
 
+    // Detect mobile on mount (before first render matters for source selection)
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768)
+    }, [])
+
+    // Parallax effect (desktop only)
     useEffect(() => {
         const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
         if (mq.matches) return
 
         const handleScroll = () => {
-            if (window.innerWidth < 768) return // Disable parallax on mobile
+            if (window.innerWidth < 768) return
             if (videoContainerRef.current) {
                 const offset = window.scrollY * 0.35
                 videoContainerRef.current.style.transform = `translateY(${offset}px) scale(1.05)`
@@ -18,35 +28,46 @@ export default function Hero() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // Attempt to play video on mount (Safari/iOS needs programmatic play)
+    useEffect(() => {
+        const vid = videoRef.current
+        if (!vid) return
+
+        const tryPlay = () => {
+            vid.play().catch(() => {
+                // Autoplay blocked — keep poster visible
+                setVideoError(true)
+            })
+        }
+
+        // If video is already ready (cached), trigger immediately
+        if (vid.readyState >= 3) {
+            setVideoReady(true)
+            tryPlay()
+        } else {
+            vid.addEventListener('canplay', tryPlay, { once: true })
+            return () => vid.removeEventListener('canplay', tryPlay)
+        }
+    }, [isMobile])
+
+    const handleCanPlay = () => {
+        setVideoReady(true)
+    }
+
+    const handleError = () => {
+        setVideoError(true)
+    }
+
+    const videoSrc = isMobile ? '/videos/hero-mobile.mp4' : '/videos/hero.mp4'
+
     return (
         <section className="relative h-screen min-h-[600px] overflow-hidden flex items-center" role="banner">
-            {/* === Layer 1: Video background === */}
+            {/* === Layer 0: Fallback poster image (always behind video) === */}
             <div
                 ref={videoContainerRef}
                 className="absolute inset-0 z-0"
                 style={{ willChange: 'transform' }}
             >
-                <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    poster="/images/hero2.webp"
-                    preload="auto"
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        objectPosition: 'center',
-                    }}
-                >
-                    <source src="/videos/hero.mp4" type="video/mp4" />
-                </video>
-
-                {/* Fallback image (shows if video fails to load) */}
                 <img
                     src="/images/hero2.webp"
                     alt=""
@@ -59,9 +80,38 @@ export default function Hero() {
                         height: '100%',
                         objectFit: 'cover',
                         objectPosition: 'center',
-                        zIndex: -1,
+                        zIndex: 0,
                     }}
                 />
+
+                {/* === Layer 1: Video (fades in when ready) === */}
+                {!videoError && (
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        poster="/images/hero2.webp"
+                        onCanPlay={handleCanPlay}
+                        onError={handleError}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            zIndex: 1,
+                            opacity: videoReady ? 1 : 0,
+                            transition: 'opacity 0.8s ease-in-out',
+                        }}
+                    >
+                        <source src={videoSrc} type="video/mp4" />
+                    </video>
+                )}
             </div>
 
             {/* === Layer 2: Cinematic overlays === */}
