@@ -76,13 +76,27 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom bar */}
-                <div className="mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="font-body text-xs text-stone-700 font-light">
-                        © {currentYear} Салон керамогранита ПРОРАБ. Все права защищены.
-                    </p>
-                    <p className="font-body text-xs text-stone-800 font-light">
-                        Ростовская область, с. Крым
-                    </p>
+                <div className="mt-16 pt-8 border-t border-white/5 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-4">
+                    <div className="flex flex-col items-center lg:items-start gap-4">
+                        <p className="font-body text-xs text-stone-700 font-light text-center lg:text-left">
+                            © {currentYear} Салон керамогранита ПРОРАБ. Все права защищены.
+                        </p>
+                        <div className="font-body text-[11px] sm:text-xs text-stone-600 font-light flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                            <span>ИП Баграмян Е.С.</span>
+                            <span className="hidden sm:inline text-stone-800">•</span>
+                            <span>ОГРНИП 321619600064166</span>
+                            <span className="hidden sm:inline text-stone-800">•</span>
+                            <span>ИНН 612202592170</span>
+                        </div>
+                    </div>
+                    <div className="font-body text-xs font-light text-center lg:text-right">
+                        <a
+                            href="/privacy-policy"
+                            className="text-stone-500 hover:text-gold transition-colors duration-300 underline underline-offset-4 decoration-white/10 hover:decoration-gold/50"
+                        >
+                            Политика конфиденциальности
+                        </a>
+                    </div>
                 </div>
             </div>
         </footer>

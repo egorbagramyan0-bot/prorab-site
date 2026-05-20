@@ -105,6 +105,16 @@ export default function Contacts() {
                                 key={i}
                                 className="reveal glass rounded-2xl p-6 hover:bg-white/10 hover:border-gold/20 transition-all duration-400 group cursor-pointer"
                                 style={{ transitionDelay: `${i * 80}ms` }}
+                                onClick={(e) => {
+                                    if (e.target.closest('a')) return;
+                                    if (item.link) {
+                                        if (item.link.startsWith('http')) {
+                                            window.open(item.link, '_blank', 'noopener,noreferrer');
+                                        } else {
+                                            window.location.href = item.link;
+                                        }
+                                    }
+                                }}
                             >
                                 <div className="flex items-start gap-5">
                                     <div className="w-11 h-11 flex-shrink-0 bg-gradient-to-br from-gold to-gold-light rounded-xl flex items-center justify-center text-stone-900">

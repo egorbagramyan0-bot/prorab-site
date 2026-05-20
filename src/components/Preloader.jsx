@@ -49,26 +49,23 @@ export default function Preloader() {
 
             <div className="relative z-10 flex flex-col items-center">
                 {/* Логотип */}
-                <div className="mb-6 w-20 sm:w-28 animate-fade-in-up">
+                <div className="mb-8 w-40 sm:w-56 animate-fade-in-up">
                     <img
                         src="/images/logo2.webp"
                         alt="Логотип"
-                        className="w-full h-auto drop-shadow-[0_0_15px_rgba(202,138,4,0.15)]"
+                        className="w-full h-auto drop-shadow-[0_0_20px_rgba(202,138,4,0.2)]"
                     />
                 </div>
 
-                {/* Текст */}
-                <div className="text-center mb-10 overflow-hidden">
-                    <h1 className="font-heading text-4xl sm:text-5xl font-bold tracking-[0.15em] text-stone-50 mb-3 animate-slide-up" style={{ animationDelay: '200ms' }}>
-                        ПРОРАБ
-                    </h1>
-                    <p className="font-body text-xs sm:text-sm font-light text-stone-400 uppercase tracking-[0.3em] animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+                {/* Подпись */}
+                <div className="text-center mb-12 overflow-hidden">
+                    <p className="font-body text-xs sm:text-sm font-light text-stone-400 uppercase tracking-[0.3em] animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                         салон керамогранита
                     </p>
                 </div>
 
                 {/* Индикатор загрузки */}
-                <div className="w-56 sm:w-72 h-[1px] bg-stone-800 rounded-full overflow-hidden animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+                <div className="w-56 sm:w-72 h-[1px] bg-stone-800 rounded-full overflow-hidden animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                     <div className="h-full bg-gradient-to-r from-gold-dark via-gold to-gold-light w-full origin-left animate-progress" />
                 </div>
             </div>

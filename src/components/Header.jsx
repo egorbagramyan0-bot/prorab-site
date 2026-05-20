@@ -12,7 +12,7 @@ export default function Header() {
 
     const navLinks = [
         { href: '#about', label: 'О салоне' },
-        { href: '#ceramic3d', label: 'Ceramic 3D' },
+        { href: '#ceramic3d', label: '3D проект' },
         { href: '#brands', label: 'Бренды' },
         { href: '#contacts', label: 'Контакты' },
     ]
