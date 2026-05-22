@@ -61,7 +61,7 @@ export default function Contacts() {
             ),
             title: 'MAX',
             text: '@prorab_salon',
-            link: 'https://max.ru/+7+(989)+634-13-75',
+            link: 'https://max.ru/u/f9LHodD0cOLHT4tQCUdYpQPgnUrncJX9sVoYTdvYK4MvyuS18sa8oHhFObI',
             linkLabel: 'Написать',
         },
         {
