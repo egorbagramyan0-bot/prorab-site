@@ -1,167 +1,206 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import useReveal from '../hooks/useReveal'
+import { SITE } from '../data/site'
+import { reachGoal } from '../lib/metrika'
+
+const PHOTO_ALTS = [
+    'Шоурум салона ПРОРАБ: зона консультации и стенды с образцами керамогранита',
+    'Стенды с крупноформатным керамогранитом в салоне ПРОРАБ',
+    'Образцы керамогранита Alma Ceramica в салоне отделочных материалов ПРОРАБ',
+    'Стенды Alma Ceramica и Artkera с образцами плитки в салоне ПРОРАБ',
+    'Экспозиция керамогранита Laparet в салоне ПРОРАБ, с. Крым',
+    'Образцы керамогранита под дерево и стенд Artkera в салоне ПРОРАБ',
+]
+
+const PHOTOS = PHOTO_ALTS.map((alt, i) => ({
+    src: `/images/salon-bg/s${i + 1}.webp`,
+    srcSet: `/images/s${i + 1}.webp 1200w, /images/salon-bg/s${i + 1}.webp 2000w`,
+    alt,
+}))
+
+const SLIDE_MS = 6000
+
+const FACTS = [
+    { label: 'Адрес', value: `${SITE.address.locality}, ${SITE.address.street}`, note: `${SITE.address.district}, ${SITE.address.region}` },
+    { label: 'Дорога', value: SITE.fromRostov, note: 'Удобный подъезд к салону' },
+    { label: 'Режим работы', value: SITE.hours, note: 'Без выходных' },
+    { label: 'Доставка', value: 'Доставим выбранные материалы', note: 'Сроки и условия уточняйте у консультанта' },
+]
+
+const Arrow = ({ d }) => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d={d} />
+    </svg>
+)
 
 export default function About() {
-    const sectionRef = useRef(null)
-    const [currentPhoto, setCurrentPhoto] = useState(0)
+    const sectionRef = useReveal()
+    const [current, setCurrent] = useState(0)
+    // Грузим только уже показанные фото и следующее — не тянем все 6 сразу
+    const [loadedUpTo, setLoadedUpTo] = useState(1)
 
-    // Обновленные 6 фотографий салона
-    const photos = [
-        "/images/s1.webp",
-        "/images/s2.webp",
-        "/images/s3.webp",
-        "/images/s4.webp",
-        "/images/s5.webp",
-        "/images/s6.webp"
-    ]
+    const goTo = (idx) => {
+        const next = (idx + PHOTOS.length) % PHOTOS.length
+        setCurrent(next)
+        setLoadedUpTo((prev) => Math.max(prev, Math.min(next + 1, PHOTOS.length - 1)))
+    }
 
-    const nextPhoto = () => setCurrentPhoto(prev => (prev + 1) % photos.length)
-    const prevPhoto = () => setCurrentPhoto(prev => (prev - 1 + photos.length) % photos.length)
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentPhoto(prev => (prev + 1) % photos.length)
-        }, 3000)
-        return () => clearInterval(timer)
-    }, [photos.length])
+    // Пауза при наведении/фокусе; при «уменьшить движение» фото не листаются сами.
+    // Фото меняется по окончании анимации полоски прогресса — пауза останавливает и то, и другое.
+    const [paused, setPaused] = useState(false)
+    const [reducedMotion, setReducedMotion] = useState(false)
 
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible')
-                    }
-                })
-            },
-            { threshold: 0.1 }
-        )
-
-        const elements = sectionRef.current?.querySelectorAll('.reveal')
-        elements?.forEach((el) => observer.observe(el))
-        return () => observer.disconnect()
+        setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     }, [])
 
-    const features = [
-        {
-            value: '25+',
-            title: 'Брендов-партнёров',
-            desc: 'Работаем напрямую с ведущими заводами-изготовителями',
-        },
-        {
-            value: '3000+',
-            title: 'Коллекций доступно к заказу',
-            desc: 'Огромный выбор текстур, форматов и оттенков под любой проект',
-        },
-        {
-            value: '7/7',
-            title: 'Дней в неделю',
-            desc: 'Мы открыты каждый день без перерывов с 9:00 до 20:00',
-        },
-        {
-            value: 'PRO',
-            title: 'Экспертная помощь',
-            desc: 'Подберём материал под ваш проект, стиль и бюджет',
-        },
-    ]
-
     return (
-        <section id="about" ref={sectionRef} className="relative py-16 sm:py-28 lg:py-36 bg-stone-50 overflow-hidden">
-            {/* Subtle decorative elements */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/3 rounded-full blur-[150px]" />
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-stone-300/20 rounded-full blur-[100px]" />
+        <section
+            id="about"
+            ref={sectionRef}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) setPaused(false)
+            }}
+            className="relative isolate overflow-hidden bg-stone-950 min-h-screen-safe flex flex-col justify-end">
+            {/* Фото салона — фон блока */}
+            <div className="absolute inset-0 -z-10">
+                {PHOTOS.map((p, idx) =>
+                    idx <= loadedUpTo || idx === current ? (
+                        <img
+                            key={p.src}
+                            src={p.src}
+                            srcSet={p.srcSet}
+                            sizes="100vw"
+                            alt={p.alt}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            style={{
+                                opacity: current === idx ? 1 : 0,
+                                transform: current === idx ? 'scale(1.08)' : 'scale(1)',
+                                transition: 'opacity 1.4s ease, transform 7s linear',
+                            }}
+                        />
+                    ) : null
+                )}
+                <div aria-hidden="true" className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-stone-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/45 to-stone-950/10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-stone-950/75 via-stone-950/15 to-transparent" />
+            </div>
 
-            <div className="relative max-w-7xl mx-auto px-5 sm:px-8">
-                {/* Section Header */}
-                <div className="text-center mb-12 sm:mb-20 reveal">
-                    <div className="section-tag justify-center mb-6">О салоне</div>
-                    <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold text-stone-900 mb-4 sm:mb-5">
-                        Место, где рождаются
-                        <br />
-                        <span className="text-gradient">идеальные интерьеры</span>
-                    </h2>
-                    <p className="font-body text-base text-stone-500 max-w-2xl mx-auto leading-relaxed font-light">
-                        Специализированный салон, где вы можете увидеть и потрогать образцы
-                        от ведущих производителей, получить экспертную консультацию и выбрать
-                        идеальное покрытие для вашего пространства.
-                    </p>
-                </div>
-
-                {/* Content grid */}
-                <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-                    {/* Carousel */}
-                    <div className="reveal relative group">
-                        <div className="relative rounded-3xl overflow-hidden h-[280px] sm:h-[400px] lg:h-[450px]">
-                            {photos.map((src, idx) => (
-                                <img
-                                    key={idx}
-                                    src={src}
-                                    alt={`Интерьер салона керамогранита ПРОРАБ ${idx + 1}`}
-                                    loading={idx === 0 ? "eager" : "lazy"}
-                                    fetchPriority={idx === 0 ? "high" : "auto"}
-                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${currentPhoto === idx ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
-                                        }`}
-                                />
-                            ))}
-                            <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent pointer-events-none z-20" />
-
-                            {/* Controls */}
-                            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 px-4 flex justify-between z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <button onClick={prevPhoto} className="w-10 h-10 rounded-full glass border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                                </button>
-                                <button onClick={nextPhoto} className="w-10 h-10 rounded-full glass border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                </button>
-                            </div>
-
-                            {/* Dots */}
-                            <div className="absolute bottom-6 right-6 flex gap-2 z-30">
-                                {photos.map((_, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setCurrentPhoto(idx)}
-                                        className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${currentPhoto === idx ? 'bg-gold w-6' : 'bg-white/60 w-2 hover:bg-white'
-                                            }`}
-                                        aria-label={`Перейти к фото ${idx + 1}`}
-                                    />
-                                ))}
-                            </div>
-
-                            {/* Floating badge */}
-                            <div className="absolute bottom-6 left-6 glass border border-white/20 rounded-xl px-4 py-2.5 z-30 pointer-events-none">
-                                <p className="font-body text-[10px] uppercase tracking-[0.15em] text-stone-300 mb-0.5">Ростовская область</p>
-                                <p className="font-heading text-base font-semibold text-white">с. Крым</p>
-                            </div>
+            <div className="about-photo-gap relative container-site sm:pt-28 pb-8 sm:pb-14">
+                <h2 className="reveal font-heading text-[1.75rem] sm:text-4xl lg:text-[2.9rem] 2xl:text-[3.25rem] text-stone-50 leading-[1.1] mb-8 lg:mb-10 drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)]">
+                    Место, где материалы
+                    {' '}<br />
+                    <span className="text-gradient">можно увидеть вживую</span>
+                </h2>
+                <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-16 items-start">
+                    {/* Текст */}
+                    <div className="reveal">
+                        <p className="font-body text-base sm:text-lg xl:text-xl text-stone-200 leading-relaxed mb-8 max-w-xl">
+                            В&nbsp;салоне ПРОРАБ можно посмотреть образцы отделочных материалов, сравнить фактуры, оттенки и&nbsp;форматы,
+                            а&nbsp;также получить консультацию по&nbsp;подбору плитки, напольных покрытий, дверей и&nbsp;фурнитуры.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                            <a
+                                href={SITE.routeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => reachGoal('build_route')}
+                                className="btn-primary !px-8 whitespace-nowrap text-xs sm:text-sm inline-flex items-center justify-center gap-2"
+                            >
+                                Построить маршрут
+                                <Arrow d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                            </a>
+                            <a href={SITE.phoneHref} className="btn-secondary !px-8 whitespace-nowrap text-xs sm:text-sm text-center">
+                                {SITE.phone}
+                            </a>
                         </div>
 
-                        {/* Decorative frame */}
-                        <div className="absolute -bottom-4 -right-4 w-full h-full rounded-3xl border border-gold/20 -z-10" />
+                        {/* Рейтинг — официальный бейдж Яндекса, цифры обновляются сами */}
+                        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+                            <iframe
+                                src={`https://yandex.ru/sprav/widget/rating-badge/${SITE.yandexOrgId}?type=rating`}
+                                width="150"
+                                height="50"
+                                frameBorder="0"
+                                loading="lazy"
+                                title="Рейтинг салона ПРОРАБ на Яндекс Картах"
+                                className="rounded-lg bg-white flex-shrink-0"
+                            />
+                            <a
+                                href={SITE.reviewsUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 font-body text-sm xl:text-base font-semibold text-stone-200 hover:text-gold transition-colors"
+                            >
+                                Отзывы клиентов на&nbsp;Яндекс Картах
+                                <Arrow d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                            </a>
+                        </div>
                     </div>
 
-                    {/* Features grid */}
-                    <div className="grid sm:grid-cols-2 gap-5 reveal-stagger">
-                        {features.map((item, i) => (
+                    {/* Факты на стекле */}
+                    <dl className="reveal grid grid-cols-2 rounded-3xl overflow-hidden border border-white/10 bg-stone-950/45 backdrop-blur-xl">
+                        {FACTS.map((f, i) => (
                             <div
-                                key={i}
-                                className="reveal group glass-light rounded-2xl p-7 hover:shadow-xl hover:shadow-stone-900/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+                                key={f.label}
+                                className={`p-4 sm:p-6 border-white/10 ${i > 1 ? 'border-t' : ''} ${i % 2 === 1 ? 'border-l' : ''}`}
                             >
-                                {item.value ? (
-                                    <div className="font-heading text-4xl sm:text-5xl font-bold text-gradient mb-4 drop-shadow-[0_0_12px_rgba(202,138,4,0.3)] group-hover:scale-105 transition-transform duration-500 origin-left">
-                                        {item.value}
-                                    </div>
-                                ) : (
-                                    <div className="w-12 h-12 bg-stone-900 rounded-xl flex items-center justify-center text-gold mb-5 group-hover:bg-gradient-to-br group-hover:from-gold group-hover:to-gold-light group-hover:text-stone-900 transition-all duration-500 shadow-[0_0_15px_rgba(202,138,4,0.15)] group-hover:shadow-[0_0_20px_rgba(202,138,4,0.4)]">
-                                        {item.icon}
-                                    </div>
-                                )}
-                                <h3 className="font-heading text-xl font-bold text-stone-900 mb-2">
-                                    {item.title}
-                                </h3>
-                                <p className="font-body text-sm text-stone-500 leading-relaxed font-light">
-                                    {item.desc}
-                                </p>
+                                <dt className="font-body text-xs xl:text-sm font-semibold uppercase tracking-[0.16em] text-gold mb-2">{f.label}</dt>
+                                <dd>
+                                    <p className="font-body text-[0.8125rem] sm:text-base xl:text-lg font-medium text-stone-50 leading-snug">{f.value}</p>
+                                    <p className="font-body text-[0.6875rem] sm:text-sm text-stone-400 mt-1">{f.note}</p>
+                                </dd>
                             </div>
                         ))}
+                    </dl>
+                </div>
+
+                {/* Управление слайдами */}
+                <div className="mt-8 sm:mt-14 pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-between gap-6">
+                    <p className="hidden sm:block font-body text-xs uppercase tracking-[0.2em] text-stone-400">
+                        Салон ПРОРАБ · {SITE.address.locality}
+                    </p>
+                    <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
+                        <div className="flex gap-1.5 flex-1 sm:flex-none">
+                            {PHOTOS.map((p, idx) => (
+                                <button
+                                    key={p.src}
+                                    type="button"
+                                    onClick={() => goTo(idx)}
+                                    aria-label={`Фото салона ${idx + 1}`}
+                                    aria-current={current === idx}
+                                    className="relative h-11 flex-1 sm:flex-none sm:w-10 cursor-pointer group"
+                                >
+                                    <span className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] rounded-full bg-white/20 group-hover:bg-white/40 overflow-hidden">
+                                        {current === idx && (
+                                            <span
+                                                key={current}
+                                                className="absolute inset-0 bg-gold origin-left animate-progress"
+                                                style={{
+                                                    animationDuration: `${SLIDE_MS}ms`,
+                                                    animationTimingFunction: 'linear',
+                                                    animationPlayState: paused ? 'paused' : 'running',
+                                                }}
+                                                onAnimationEnd={() => !reducedMotion && goTo(current + 1)}
+                                            />
+                                        )}
+                                        {idx < current && <span className="absolute inset-0 bg-white/50" />}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex gap-2">
+                            <button type="button" onClick={() => goTo(current - 1)} aria-label="Предыдущее фото" className="w-11 h-11 rounded-full border border-white/20 text-stone-200 flex items-center justify-center hover:border-gold hover:text-gold transition-colors cursor-pointer">
+                                <Arrow d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </button>
+                            <button type="button" onClick={() => goTo(current + 1)} aria-label="Следующее фото" className="w-11 h-11 rounded-full border border-white/20 text-stone-200 flex items-center justify-center hover:border-gold hover:text-gold transition-colors cursor-pointer">
+                                <Arrow d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

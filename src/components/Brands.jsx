@@ -1,181 +1,165 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import useReveal from '../hooks/useReveal'
+import { BRANDS, brandsByCategory } from '../data/brands'
+import { CATEGORIES, getCategory } from '../data/categories'
+import { SITE } from '../data/site'
+import SectionHeader from './SectionHeader'
 
-const brands = [
-    { name: 'Alma Ceramica', url: 'https://almaceramica.ru', logo: '/images/brands-opt/alma.webp' },
-    { name: 'Artkera', url: 'https://artkera.ru/?ysclid=mp5uood2u9366592724', logo: '/images/brands-opt/artkera.webp' },
-    { name: 'Casati', url: 'https://casaticeramica.ru/?ysclid=mp5uwk3g5k782095352', logo: '/images/brands-opt/casati.webp' },
-    { name: 'Cersanit', url: 'https://cersanit.ru/catalog/2d/', logo: '/images/brands-opt/cersanit.webp' },
-    { name: 'Dako', url: 'https://dako.club/?ysclid=mp5uubragx437521517', logo: '/images/brands-opt/dako.webp' },
-    { name: 'Delacora', url: 'https://artkera.ru/collections?brand=.delacora', logo: '/images/brands-opt/delacora.webp' },
-    { name: 'Eurotile', url: 'https://eurotile.ru/', logo: '/images/brands-opt/eurotile.webp' },
-    { name: 'Graniteya', url: 'https://www.uralgres.com/catalog/granitea/?ysclid=mp5uzeetyh794605150', logo: '/images/brands-opt/graniteya.webp' },
-    { name: 'Idalgo', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/idalgo.webp' },
-    { name: 'Kerama Marazzi', url: 'https://kerama-marazzi.com', logo: '/images/brands-opt/kerama-marazzi.webp' },
-    { name: 'Keramin', url: 'https://keramin.ru/?ysclid=mp5uwx5ff4815611066', logo: '/images/brands-opt/keramin.webp' },
-    { name: 'LCM', url: 'https://artkera.ru/collections?brand=.lcm', logo: '/images/brands-opt/lcm.webp' },
-    { name: 'Maimoon', url: 'https://maimoonceramica.ru/', logo: '/images/brands-opt/maimoon.webp' },
-    { name: 'New Trend', url: 'https://artkera.ru/collections?brand=.new-trend', logo: '/images/brands-opt/newtrend.webp' },
-    { name: 'Уральский Гранит', url: 'https://www.uralgres.com/?ysclid=mp5ummkjzk875710236', logo: '/images/brands-opt/ural.webp' },
-    { name: 'Altacera', url: 'https://artkera.ru/collections?brand=.altacera', logo: '/images/brands-opt/altacera.webp' },
-    { name: 'Gracia Ceramica', url: 'https://graciaceramica.com/collections/', logo: '/images/brands-opt/gracia.webp' },
-    { name: 'Laparet', url: 'https://laparet.ru/collection/keramogranit/', logo: '/images/brands-opt/laparet.webp' },
-    { name: 'Protile', url: 'https://protiles.uz/ru/tipovye-resheniya/', logo: '/images/brands-opt/protile.webp' },
-    { name: 'Vitra', url: 'https://www.vitra-russia.ru/catalog/tiles/', logo: '/images/brands-opt/vitra.webp' },
-]
+const ExternalIcon = ({ className }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    </svg>
+)
 
-const BrandSphere = () => {
-    const [radius, setRadius] = useState(450)
+// Две темы секции: тёмная (страницы категорий) и светлая (главная, чтобы не сливаться с тёмными контактами).
+const THEMES = {
+    dark: {
+        section: 'bg-stone-900 noise',
+        card: 'bg-stone-800/40 border-white/10 hover:shadow-black/40',
+        logo: 'bg-white',
+        name: 'text-stone-100',
+        label: 'text-stone-400',
+        cta: 'text-gold group-hover:text-gold-light',
+        chip: 'bg-white/[0.03] text-stone-300 border-white/10 hover:border-gold/40 hover:text-gold',
+        empty: 'border-white/15 bg-white/[0.02]',
+        emptyTitle: 'text-stone-100',
+        emptyText: 'text-stone-400',
+        secondaryBtn: 'btn-secondary',
+        note: 'text-stone-400',
+    },
+    light: {
+        section: 'bg-white',
+        card: 'bg-stone-50 border-stone-200/80 hover:shadow-stone-900/10',
+        logo: 'bg-white border-b border-stone-200/70',
+        name: 'text-stone-900',
+        label: 'text-stone-500',
+        cta: 'text-gold-dark group-hover:text-gold',
+        chip: 'bg-white text-stone-600 border-stone-200 hover:border-gold/50 hover:text-gold-dark',
+        empty: 'border-stone-300 bg-stone-50',
+        emptyTitle: 'text-stone-900',
+        emptyText: 'text-stone-500',
+        secondaryBtn: 'btn-secondary !text-stone-800 !border-stone-300 hover:!text-gold-dark hover:!border-gold',
+        note: 'text-stone-500',
+    },
+}
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 640) setRadius(250)
-            else if (window.innerWidth < 1024) setRadius(350)
-            else setRadius(520)
-        }
-        handleResize()
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
-    }, [])
+function BrandCard({ brand, t }) {
+    const labels = brand.categories.map((id) => getCategory(id)?.filterLabel).filter(Boolean)
 
     return (
-        <div className="sphere-container overflow-hidden pointer-events-none mt-4 sm:mt-8">
-            {/* Ambient gradients to fade edges smoothly */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#1c1917_70%)] pointer-events-none z-40" />
-
-            {/* Central Stone Sphere */}
-            <div className="stone-sphere">
-                <picture className="w-full h-full flex items-center justify-center">
-                    <source srcSet="/images/sphere.webp" type="image/webp" />
-                    <img src="/images/sphere.png" alt="Сфера из гранита" />
-                </picture>
+        <a
+            href={brand.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${brand.name} — открыть официальный каталог производителя в новой вкладке`}
+            className={`group flex flex-col h-full rounded-2xl overflow-hidden border hover:border-gold/40 hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ${t.card}`}
+        >
+            <div className={`h-24 sm:h-28 xl:h-32 px-5 py-4 flex items-center justify-center ${t.logo}`}>
+                {brand.logo ? (
+                    <img src={brand.logo} alt={`Логотип ${brand.name}`} loading="lazy" className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                    <span className="font-body text-xl font-extrabold text-stone-800 text-center leading-tight">{brand.name}</span>
+                )}
             </div>
+            <div className="flex flex-col flex-1 p-4 sm:p-5 xl:p-6">
+                <h3 className={`font-body text-base xl:text-lg font-semibold ${t.name}`}>{brand.name}</h3>
+                <p className={`font-body text-xs sm:text-sm mt-1 ${t.label}`}>{labels.join(' · ')}</p>
+                <span className={`mt-auto pt-4 xl:pt-5 font-body text-sm xl:text-[0.95rem] font-semibold leading-snug transition-colors ${t.cta}`}>
+                    Открыть каталог производителя
+                    <ExternalIcon className="inline-block w-3.5 h-3.5 ml-1 -mt-0.5 align-middle transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+            </div>
+        </a>
+    )
+}
 
-            {/* Center Single Orbit */}
-            <div className="sphere-orbit-container" style={{ transform: 'rotateX(-8deg)' }}>
-                <div className="sphere-orbit" style={{ animation: 'spin-y 40s linear infinite' }}>
-                    {brands.map((brand, i) => {
-                        const angle = (360 / brands.length) * i
-                        const animDelay = -(40 * (angle / 360)) // sync with 40s spin-y
-
-                        return (
-                            <a
-                                key={brand.name}
-                                href={brand.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="sphere-card-wrapper"
-                                style={{
-                                    transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
-                                    '--anim-delay': `${animDelay}s`
-                                }}
-                                title={`Перейти на сайт ${brand.name}`}
-                            >
-                                <div className="sphere-card">
-                                    <img src={brand.logo} alt={brand.name} loading="eager" />
-                                </div>
-                            </a>
-                        )
-                    })}
-                </div>
+function EmptyState({ category, t }) {
+    return (
+        <div className={`col-span-full rounded-3xl border border-dashed px-6 py-12 sm:py-16 text-center ${t.empty}`}>
+            <p className={`font-heading text-xl sm:text-2xl leading-snug mb-4 ${t.emptyTitle}`}>
+                Бренды {category ? <>в&nbsp;категории «{category.name}»</> : null} скоро появятся на&nbsp;сайте
+            </p>
+            <p className={`font-body text-sm sm:text-base max-w-xl mx-auto mb-8 ${t.emptyText}`}>
+                Мы&nbsp;готовим список производителей. Актуальный ассортимент, образцы и&nbsp;наличие уточняйте у&nbsp;консультанта салона.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href={SITE.phoneHref} className="btn-primary text-xs sm:text-sm xl:text-[0.95rem]">Позвонить</a>
+                <a href={SITE.telegram} target="_blank" rel="noopener noreferrer" className={`${t.secondaryBtn} text-xs sm:text-sm xl:text-[0.95rem]`}>Написать в&nbsp;Telegram</a>
             </div>
         </div>
     )
 }
 
-export default function Brands() {
-    const sectionRef = useRef(null)
+// category — фиксированная категория (страница категории), без неё — все бренды с фильтрами.
+export default function Brands({ category = null, title, accent, text, headingLevel = 'h2', light = false }) {
+    const t = light ? THEMES.light : THEMES.dark
+    const sectionRef = useReveal()
+    const [filter, setFilter] = useState('all')
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible')
-                    }
-                })
-            },
-            { threshold: 0.1 }
-        )
-        const els = sectionRef.current?.querySelectorAll('.reveal')
-        els?.forEach((el) => observer.observe(el))
-        return () => observer.disconnect()
-    }, [])
+    const fixedCategory = category ? getCategory(category) : null
+    const activeId = fixedCategory ? fixedCategory.id : filter === 'all' ? null : filter
+    const brands = activeId ? brandsByCategory(activeId) : BRANDS
+    const activeCategory = activeId ? getCategory(activeId) : null
+
+    const filters = [{ id: 'all', label: 'Все' }, ...CATEGORIES.map((c) => ({ id: c.id, label: c.filterLabel }))]
 
     return (
-        <section
-            id="brands"
-            ref={sectionRef}
-            className="relative py-16 sm:py-28 lg:py-36 bg-stone-900 noise overflow-hidden"
-        >
-            {/* Ambient lights */}
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[600px] bg-gold/5 rounded-full blur-[150px]" />
-            <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[400px] h-[600px] bg-gold/3 rounded-full blur-[150px]" />
+        <section id="brands" ref={sectionRef} className={`relative py-16 sm:py-28 lg:py-32 overflow-hidden ${t.section}`}>
+            {!light && (
+                <>
+                    <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[600px] bg-gold/5 rounded-full blur-[150px]" />
+                    <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gold/5 rounded-full blur-[150px]" />
+                </>
+            )}
 
-            <div className="relative z-10">
-                {/* Section Header */}
-                <div className="text-center mb-10 sm:mb-16 reveal max-w-7xl mx-auto px-4 sm:px-8">
-                    <div className="section-tag justify-center mb-6">Наши партнёры</div>
-                    <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold text-stone-50 mb-4 sm:mb-5">
-                        Бренды, которым
-                        <br />
-                        <span className="text-gradient">мы доверяем</span>
-                    </h2>
-                    <p className="font-body text-base text-stone-500 max-w-xl mx-auto leading-relaxed font-light">
-                        Сотрудничаем напрямую с лучшими производителями.
-                        Нажмите на логотип, чтобы перейти на сайт бренда.
-                    </p>
-                </div>
+            <div className="relative z-10 container-site">
+                <SectionHeader
+                    dark={!light}
+                    as={headingLevel}
+                    title={title ?? 'Бренды'}
+                    accent={accent ?? 'отделочных материалов'}
+                    text={text ?? 'Мы работаем с производителями плитки, керамогранита, напольных покрытий, дверей и фурнитуры. Нажмите на бренд, чтобы перейти в официальный каталог производителя.'}
+                    className="mb-10 sm:mb-12"
+                />
 
-                {/* 3D Sphere Component */}
-                <div className="reveal relative">
-                    <BrandSphere />
-                </div>
-
-                {/* Catalog Prompt */}
-                <div className="mt-16 sm:mt-24 mb-6 sm:mb-8 text-center reveal">
-                    <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-stone-800/50 border border-stone-700/30 backdrop-blur-sm group">
-                        <span className="text-stone-400 text-sm sm:text-base font-light tracking-wide">
-                            Для перехода в каталог нажмите на логотип
-                        </span>
-                        <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold animate-pulse">
-                            <div className="absolute inset-0 rounded-full bg-gold/20 animate-ping opacity-25" />
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="relative z-10 transition-transform duration-500 group-hover:scale-110"
-                            >
-                                <path d="m6 9 6 6 6-6" />
-                            </svg>
+                {!fixedCategory && (
+                    <div className="reveal -mx-5 sm:mx-0 mb-8 sm:mb-10">
+                        <div className="flex sm:flex-wrap sm:justify-center gap-2 overflow-x-auto no-scrollbar px-5 sm:px-0" role="group" aria-label="Фильтр брендов по категориям">
+                            {filters.map((f) => {
+                                const active = filter === f.id
+                                return (
+                                    <button
+                                        key={f.id}
+                                        type="button"
+                                        onClick={() => setFilter(f.id)}
+                                        aria-pressed={active}
+                                        className={`whitespace-nowrap px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-body text-sm xl:text-base font-medium border transition-all duration-300 cursor-pointer ${active
+                                            ? 'bg-gradient-to-br from-gold to-gold-light text-stone-900 border-transparent shadow-lg shadow-gold/20'
+                                            : t.chip
+                                            }`}
+                                    >
+                                        {f.label}
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
+                )}
+
+                <div key={activeId ?? 'all'} className="grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 2xl:gap-5 animate-fade-in-up">
+                    {brands.length > 0
+                        ? brands.map((b) => <BrandCard key={b.name} brand={b} t={t} />)
+                        : <EmptyState category={activeCategory} t={t} />}
                 </div>
 
-                {/* Static grid */}
-                <div className="mt-8 sm:mt-12 max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 relative z-30 transition-opacity duration-1000">
-                    {brands.map((brand) => (
-                        <a
-                            key={brand.name}
-                            href={brand.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-white border border-stone-200/60 rounded-lg sm:rounded-xl p-1 sm:p-1.5 flex items-center justify-center h-[60px] sm:h-[76px] hover:border-gold/40 transition-all duration-500 cursor-pointer"
-                            title={`Перейти на сайт ${brand.name}`}
-                        >
-                            <img
-                                src={brand.logo}
-                                alt={brand.name}
-                                loading="lazy"
-                                className="w-full h-full object-contain"
-                            />
-                        </a>
-                    ))}
+                <div className="reveal mt-10 sm:mt-14 max-w-3xl mx-auto flex items-start gap-4 rounded-2xl border border-gold/20 bg-gold/[0.04] px-5 py-4 sm:px-6 sm:py-5">
+                    <svg className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <p className={`font-body text-sm xl:text-base leading-relaxed ${t.note}`}>
+                        На&nbsp;сайте представлены производители, с&nbsp;которыми можно ознакомиться. Ссылки ведут на&nbsp;официальные
+                        сайты брендов. Наличие конкретных коллекций и&nbsp;образцов уточняйте у&nbsp;консультанта салона. Товарные знаки и&nbsp;логотипы принадлежат их&nbsp;правообладателям.
+                    </p>
                 </div>
             </div>
         </section>

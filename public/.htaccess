@@ -1,0 +1,65 @@
+# Timeweb (Apache). Статический сайт: каждая страница — папка с index.html.
+AddDefaultCharset UTF-8
+DirectoryIndex index.html
+Options -Indexes
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Единственный главный адрес сайта — https://prorabsalon.ru (без www).
+    # www → без www, сразу на https
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+    # http → https. На Timeweb Apache стоит за nginx, поэтому протокол проверяем и через X-Forwarded-Proto
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # /index.html и /раздел/index.html → адрес папки (убираем дубли страниц)
+    RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+    RewriteRule ^(.*/)?index\.html$ /$1 [R=301,L]
+
+    # Старые адреса политики конфиденциальности
+    RewriteRule ^privacy/?$ /privacy-policy/ [R=301,L]
+</IfModule>
+
+AddType font/woff2 .woff2
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 month"
+    ExpiresByType video/mp4 "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml application/xml text/plain application/json
+</IfModule>
+
+# Заголовки безопасности
+<IfModule mod_headers.c>
+    # Браузер всегда открывает сайт по HTTPS (год). SSL на Timeweb выпущен.
+    Header always set Strict-Transport-Security "max-age=31536000"
+    # Не «угадывать» тип файлов
+    Header always set X-Content-Type-Options "nosniff"
+    # Сайт нельзя встроить в чужую страницу (защита от кликджекинга)
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # Внешним сайтам передаётся только домен, без полного адреса страницы
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Сайту не нужны камера, микрофон, платежи и USB
+    Header always set Permissions-Policy "camera=(), microphone=(), payment=(), usb=()"
+
+    # Файлы сборки с хэшем в имени не меняются — кэшируем навсегда
+    <If "%{REQUEST_URI} =~ m#^/assets/#">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+</IfModule>

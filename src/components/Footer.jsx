@@ -1,101 +1,92 @@
+import { CATEGORIES, categoryPath } from '../data/categories'
+import { SITE } from '../data/site'
+import { openCookieSettings } from './CookieConsent'
+
+const SALON_LINKS = [
+    { href: '/#about', label: 'О салоне' },
+    { href: '/#ceramic3d', label: '3D проект' },
+    { href: '/#brands', label: 'Бренды' },
+    { href: '/#contacts', label: 'Контакты' },
+]
+
+const linkClass = 'inline-block py-1.5 font-body text-sm xl:text-base text-stone-400 hover:text-gold transition-colors duration-300 cursor-pointer'
+const legalLinkClass = 'inline-block py-3 font-body text-xs text-stone-400 hover:text-gold transition-colors duration-300 underline underline-offset-4 decoration-white/10 hover:decoration-gold/50'
+const headingClass = 'font-body text-xs xl:text-sm font-semibold uppercase tracking-[0.18em] text-stone-300 mb-5'
+
 export default function Footer() {
     const currentYear = new Date().getFullYear()
 
     return (
         <footer className="bg-stone-950 border-t border-white/5">
-            <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16">
-                <div className="grid md:grid-cols-3 gap-12 items-start">
-                    {/* Logo & desc */}
+            <div className="container-site py-14 sm:py-16">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] gap-10 lg:gap-12 items-start">
                     <div>
-                        <img
-                            src="/images/logo2.webp"
-                            alt="ПРОРАБ"
-                            className="h-[120px] mb-5 opacity-80"
-                        />
-                        <p className="font-body text-sm text-stone-600 leading-relaxed max-w-xs font-light">
-                            Салон керамогранита ПРОРАБ — ваш проводник в мире качественных отделочных материалов.
+                        <a href="/" aria-label="ПРОРАБ — на главную">
+                            <img src="/images/logo-pill.webp" alt="ПРОРАБ" width="483" height="160" loading="lazy" className="h-12 w-auto mb-6 opacity-90" />
+                        </a>
+                        <p className="font-body text-sm text-stone-400 leading-relaxed max-w-xs">
+                            ПРОРАБ&nbsp;— салон отделочных материалов в&nbsp;с.&nbsp;Крым, Ростовская область. {SITE.fromRostov}.
                         </p>
                     </div>
 
-                    {/* Navigation */}
-                    <div>
-                        <h4 className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-stone-500 mb-5">
-                            Навигация
-                        </h4>
-                        <nav className="flex flex-col gap-3">
-                            {[
-                                { href: '#about', label: 'О салоне' },
-                                { href: '#ceramic3d', label: 'Ceramic 3D' },
-                                { href: '#brands', label: 'Бренды' },
-                                { href: '#contacts', label: 'Контакты' },
-                            ].map((link) => (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    className="font-body text-sm text-stone-600 hover:text-gold transition-colors duration-300 cursor-pointer"
-                                >
-                                    {link.label}
-                                </a>
+                    <nav aria-label="Ассортимент">
+                        <p className={headingClass}>Ассортимент</p>
+                        <ul className="flex flex-col gap-1">
+                            {CATEGORIES.map((c) => (
+                                <li key={c.id}><a href={categoryPath(c)} className={linkClass}>{c.fullName}</a></li>
                             ))}
-                        </nav>
-                    </div>
+                        </ul>
+                    </nav>
 
-                    {/* Contact summary */}
+                    <nav aria-label="Салон">
+                        <p className={headingClass}>Салон</p>
+                        <ul className="flex flex-col gap-1">
+                            {SALON_LINKS.map((l) => (
+                                <li key={l.href}><a href={l.href} className={linkClass}>{l.label}</a></li>
+                            ))}
+                        </ul>
+                    </nav>
+
                     <div>
-                        <h4 className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-stone-500 mb-5">
-                            Контакты
-                        </h4>
-                        <div className="space-y-4">
-                            <a
-                                href="tel:+79896341375"
-                                className="block font-heading text-2xl font-bold text-stone-200 hover:text-gold transition-colors duration-300 cursor-pointer"
-                            >
-                                +7 (989) 634-13-75
+                        <p className={headingClass}>Контакты</p>
+                        <div className="space-y-3">
+                            <a href={SITE.phoneHref} className="block py-2 font-body text-xl font-semibold text-stone-200 hover:text-gold transition-colors duration-300">
+                                {SITE.phone}
                             </a>
-                            <p className="font-body text-sm text-stone-600 font-light">
-                                Ежедневно 9:00–20:00
+                            <p className="font-body text-sm text-stone-400">{SITE.hours}</p>
+                            <p className="font-body text-sm text-stone-400 leading-relaxed">
+                                {SITE.address.region}, {SITE.address.district},
+                                {' '}<br />
+                                {SITE.address.locality}, {SITE.address.street}
                             </p>
-                            <p className="font-body text-sm text-stone-600 leading-relaxed font-light">
-                                Ростовская обл., Мясниковский р-н,
-                                <br />
-                                с. Крым, ул. Большесальская, 20
-                            </p>
-                            <a
-                                href="https://t.me/+79896341375"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2.5 font-body text-sm font-medium text-gold hover:text-gold-light transition-colors duration-300 mt-1 cursor-pointer"
-                            >
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-                                </svg>
-                                Telegram
-                            </a>
+                            <div className="flex gap-2 -ml-2">
+                                <a href={SITE.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center min-h-11 px-2 font-body text-sm font-medium text-gold hover:text-gold-light transition-colors">Telegram</a>
+                                <a href={SITE.max} target="_blank" rel="noopener noreferrer" className="inline-flex items-center min-h-11 px-2 font-body text-sm font-medium text-gold hover:text-gold-light transition-colors">MAX</a>
+                                <a href={`mailto:${SITE.email}`} className="inline-flex items-center min-h-11 px-2 font-body text-sm font-medium text-gold hover:text-gold-light transition-colors">Email</a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Bottom bar */}
-                <div className="mt-16 pt-8 border-t border-white/5 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-4">
-                    <div className="flex flex-col items-center lg:items-start gap-4">
-                        <p className="font-body text-xs text-stone-700 font-light text-center lg:text-left">
-                            © {currentYear} Салон керамогранита ПРОРАБ. Все права защищены.
+                <div className="mt-14 pt-8 border-t border-white/5 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-4">
+                    <div className="flex flex-col items-center lg:items-start gap-3">
+                        <p className="font-body text-xs text-stone-400 text-center lg:text-left">
+                            © {currentYear} ПРОРАБ — салон отделочных материалов. Информация на&nbsp;сайте не&nbsp;является публичной офертой.
                         </p>
-                        <div className="font-body text-[11px] sm:text-xs text-stone-600 font-light flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
-                            <span>ИП Баграмян Е.С.</span>
+                        <div className="font-body text-[0.6875rem] sm:text-xs text-stone-400 flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                            <span>{SITE.legal.owner}</span>
                             <span className="hidden sm:inline text-stone-800">•</span>
-                            <span>ОГРНИП 321619600064166</span>
+                            <span>ОГРНИП {SITE.legal.ogrnip}</span>
                             <span className="hidden sm:inline text-stone-800">•</span>
-                            <span>ИНН 612202592170</span>
+                            <span>ИНН {SITE.legal.inn}</span>
                         </div>
                     </div>
-                    <div className="font-body text-xs font-light text-center lg:text-right">
-                        <a
-                            href="/privacy-policy"
-                            className="text-stone-500 hover:text-gold transition-colors duration-300 underline underline-offset-4 decoration-white/10 hover:decoration-gold/50"
-                        >
-                            Политика конфиденциальности
-                        </a>
+                    <div className="flex flex-col sm:flex-row items-center gap-x-5">
+                        <a href="/privacy-policy/" className={legalLinkClass}>Политика конфиденциальности</a>
+                        <a href="/soglasie-na-obrabotku-dannyh/" className={legalLinkClass}>Согласие на&nbsp;обработку данных</a>
+                        <button type="button" onClick={openCookieSettings} className={`${legalLinkClass} cursor-pointer`}>
+                            Настройки cookies
+                        </button>
                     </div>
                 </div>
             </div>

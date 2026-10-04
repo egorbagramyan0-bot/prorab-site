@@ -1,50 +1,42 @@
-import { useState, useEffect } from 'react'
-import Preloader from './components/Preloader'
 import Header from './components/Header'
-import Hero from './components/Hero'
-import About from './components/About'
-import Ceramic3D from './components/Ceramic3D'
-import Brands from './components/Brands'
-import Contacts from './components/Contacts'
 import Footer from './components/Footer'
-import PrivacyPolicy from './components/PrivacyPolicy'
+import CookieConsent from './components/CookieConsent'
+import LegalPage from './components/LegalPage'
+import { PRIVACY_POLICY, COOKIE_CONSENT } from './data/legal'
+import HomePage from './pages/HomePage'
+import CategoryPage from './pages/CategoryPage'
+import NotFoundPage from './pages/NotFoundPage'
 
-export default function App() {
-    const [currentPath, setCurrentPath] = useState(
-        typeof window !== 'undefined' ? window.location.pathname : '/'
-    )
-
-    useEffect(() => {
-        const handlePopState = () => {
-            setCurrentPath(window.location.pathname)
-        }
-        window.addEventListener('popstate', handlePopState)
-        return () => window.removeEventListener('popstate', handlePopState)
-    }, [])
-
-    const isPrivacy = currentPath === '/privacy' || currentPath === '/privacy-policy'
-
-    if (isPrivacy) {
-        return (
-            <div className="min-h-screen bg-stone-950 overflow-x-hidden">
-                <PrivacyPolicy />
-                <Footer compact />
-            </div>
-        )
+function Page({ route }) {
+    switch (route.page) {
+        case 'home':
+            return <HomePage />
+        case 'category':
+            return <CategoryPage categoryId={route.categoryId} />
+        case 'privacy':
+            return <LegalPage doc={PRIVACY_POLICY} related="consent" />
+        case 'consent':
+            return <LegalPage doc={COOKIE_CONSENT} related="privacy" />
+        default:
+            return <NotFoundPage />
     }
+}
 
+export default function App({ route }) {
     return (
-        <div className="min-h-screen bg-stone-50 overflow-x-hidden">
-            <Preloader />
+        <div className="min-h-screen bg-stone-950 overflow-x-hidden">
+            <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-5 focus:py-3 focus:rounded-full focus:bg-gold focus:text-stone-900 focus:font-body focus:font-semibold focus:text-sm"
+            >
+                Перейти к содержимому
+            </a>
             <Header />
-            <main>
-                <Hero />
-                <About />
-                <Ceramic3D />
-                <Brands />
-                <Contacts />
+            <main id="main" tabIndex={-1} className="focus:outline-none focus:shadow-none">
+                <Page route={route} />
             </main>
             <Footer />
+            <CookieConsent />
         </div>
     )
 }

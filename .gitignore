@@ -3,3 +3,5 @@ dist
 .env
 .vercel
 antigravity-cockpit
+dist-ssr
+*.zip

@@ -35,8 +35,8 @@ export default {
                 },
             },
             fontFamily: {
-                heading: ['Cormorant', 'Georgia', 'serif'],
-                body: ['Montserrat', 'sans-serif'],
+                heading: ['"Tenor Sans"', 'Arial', 'sans-serif'],
+                body: ['Manrope', 'Arial', 'sans-serif'],
             },
             animation: {
                 'marquee': 'scroll-marquee 40s linear infinite',
@@ -44,7 +44,7 @@ export default {
                 'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
                 'slide-up': 'slide-up 0.8s ease-out',
                 'fade-in-up': 'fade-in-up 0.7s ease-out both',
-                'progress': 'progress 3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                'progress': 'progress 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards',
             },
             keyframes: {
                 'scroll-marquee': {
